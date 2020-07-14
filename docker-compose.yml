@@ -1,0 +1,30 @@
+version: "3"
+services:
+  hub:
+    image: selenium/hub
+    ports:
+      - "4444:4444"
+  chrome:
+    image: selenium/node-chrome
+    depends_on:
+      - hub
+    environment:
+      - HUB_HOST=hub
+  firefox:
+    image: selenium/node-firefox
+    depends_on:
+      - hub
+    environment:
+      - HUB_HOST=hub
+
+  search-module:
+    image: jagadeeshv20/selenium-docker:version2
+    depends_on:
+      - chrome
+      - firefox
+    environment:
+      - BROWSER=chrome
+      - HUB_HOST=hub
+      - MODULE=search-module.xml
+    volumes:
+      - ./search-result:/user/sh/test-output
