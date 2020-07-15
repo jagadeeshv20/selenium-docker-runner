@@ -1,15 +1,27 @@
 pipeline{
 	agent any
 	stages{
-		stage("Run Test"){
+		stage("Pull Latest Image"){
 			steps{
-				bat "docker-compose up"
+				bat "docker pull jagadeeshv20/selenium-docker"
 			}
 		}
-		stage("Bring Grid Down"){
+		stage("Start Grid"){
 			steps{
-				bat "docker-compose down"
+				bat "docker-compose up -d hub chrome firefox"
 			}
+		}
+		stage("Run Test"){
+			steps{
+				bat "docker-compose up search-module"
+			}
+		}
+	}
+	post{
+		always{
+			archiveArtifacts artifacts: 'output/**'
+			bat "docker-compose down"
+			bat "rm -rf output/"
 		}
 	}
 }
